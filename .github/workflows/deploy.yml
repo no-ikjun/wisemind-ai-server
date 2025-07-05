@@ -22,7 +22,7 @@ jobs:
       - name: 원격 배포 실행
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "
-            cd /home/ubuntu/wisemind-server &&
+            cd /wisemind-server &&
             git pull origin main &&
             docker-compose down &&
             docker-compose build &&
