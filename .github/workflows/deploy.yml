@@ -24,7 +24,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "
             cd /home/ubuntu/wisemind-ai/wisemind-ai-server &&
             git pull origin master &&
-            docker-compose down &&
-            docker-compose build &&
-            docker-compose up -d
+            docker compose down &&
+            docker compose build &&
+            docker compose up -d
           "
