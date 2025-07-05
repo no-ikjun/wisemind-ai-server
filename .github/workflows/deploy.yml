@@ -1,4 +1,4 @@
-name: Wisemind Full Auto Deploy
+name: Wisemind Auto Deploy
 
 on:
   push:
@@ -15,10 +15,11 @@ jobs:
       - name: SSH 설정
         run: |
           mkdir -p ~/.ssh
+          printf "%s\n" "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: 서버 원격 배포 실행
+      - name: 원격 배포 실행
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "
             cd /home/ubuntu/wisemind-server &&
