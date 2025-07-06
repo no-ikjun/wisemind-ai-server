@@ -7,8 +7,8 @@ def save_vector_to_local_db(vector: list, meta: dict):
     print("벡터 DB에 저장 완료")
 
 
-# NEST_API_URL = os.getenv("NEST_API_URL")
-NEST_API_URL = "http://localhost:5050"
+NEST_API_URL = os.getenv("NEST_API_URL")
+# NEST_API_URL = "http://localhost:5050"
 
 def save_article_to_nest(payload: dict):
     try:
