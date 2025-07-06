@@ -2,7 +2,7 @@ from fastapi import APIRouter, Query
 from app.services.news_service import get_news
 from app.services.article_service import extract_article_content, get_embedding
 from app.services.generator_service import generate_level_articles
-from app.services.storage_service import save_article_to_nest
+from app.services.storage_service import save_article_to_nest, save_vector_to_local_db
 
 router = APIRouter()
 
@@ -38,7 +38,12 @@ def generate_articles(q: str = Query(...)):
             "sources": source_links
         }
         save_article_to_nest(record)
-        print(f"{level} 아티클 저장 완료")
+        save_vector_to_local_db(vector, {
+        "topic": q,
+        "difficulty": level,
+        "article": content,
+        "sources": source_links
+    })
 
         results[level] = {
             "article": content,

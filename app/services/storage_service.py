@@ -1,5 +1,11 @@
 import requests
 import os
+from app.services.vector_db_service import add_vector
+
+def save_vector_to_local_db(vector: list, meta: dict):
+    add_vector(vector, meta)
+    print("벡터 DB에 저장 완료")
+
 
 # NEST_API_URL = os.getenv("NEST_API_URL")
 NEST_API_URL = "http://localhost:5050"
