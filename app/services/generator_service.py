@@ -4,9 +4,75 @@ from dotenv import load_dotenv
 import re
 
 load_dotenv()
+
+CLOVA_API_KEY = os.getenv("NCLOVA_API_KEY")
+CLOVA_API_URL = "https://clovastudio.stream.ntruss.com/testapp/v1/requests/HCX-003"
+
+HEADERS = {
+    "X-NCP-CLOVASTUDIO-API-KEY": CLOVA_API_KEY,
+    "X-NCP-APIGW-API-KEY": CLOVA_API_KEY,
+    "Content-Type": "application/json",
+}
+
+#CLOVA 활용 아티클 생성
+def generate_level_articles(all_texts: list, topic: str) -> dict:
+    combined_text = "\n\n".join(all_texts)
+
+    prompt = f"""
+다음은 '{topic}' 주제의 뉴스 5개 내용입니다:
+
+\"\"\"{combined_text}\"\"\"
+
+이 정보를 바탕으로 투자자를 위한 Wisemind 아티클을 난이도별로 3개 작성해줘.
+
+조건:
+- 초급 투자자용 (beginner)
+- 중급 투자자용 (intermediate)
+- 고급 투자자용 (advanced)
+
+각 아티클에는 반드시 다음을 포함해야 함:
+- 최신 투자 동향과 시장 상황
+- 해당 주제 관련 주요 기업의 움직임 및 발표
+- 전문가의 해석 또는 전망 (AI가 상상력으로 작성 가능)
+- 투자자가 실질적으로 고려해야 할 포인트
+- 전체 분량: 최소 1000자 이상, 최대 2000자 이내
+
+초급은 쉽게, 고급은 심도 깊게 작성해야 하며, 각 수준에 맞는 전문 용어와 배경 설명을 조정해야 함.
+
+!!IMPORTANT!! 아래 형식을 반드시 지켜야 해:
+[Beginner]
+(초급 아티클 본문)
+
+[Intermediate]
+(중급 아티클 본문)
+
+[Advanced]
+(고급 아티클 본문)
+"""
+
+    response = requests.post(
+        CLOVA_API_URL,
+        headers=HEADERS,
+        json={
+            "text": prompt,
+            "maxTokens": 3000,
+            "temperature": 0.7,
+            "topP": 0.8,
+            "repeatPenalty": 5.0,
+        },
+    )
+
+    if response.status_code != 200:
+        raise Exception(f"Failed to get completion: {response.text}")
+
+    output = response.json()["result"]["text"].strip()
+    return parse_level_output(output)
+
+
 client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 
-def generate_level_articles(all_texts: list, topic: str) -> dict:
+#ChatGPT 활용 아티클 생성
+def generate_level_articles_openai(all_texts: list, topic: str) -> dict:
     combined_text = "\n\n".join(all_texts)
 
     prompt = f"""
