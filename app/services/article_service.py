@@ -19,22 +19,22 @@ def extract_article_content(url: str) -> str:
     article.parse()
     return article.text
 
-def get_embedding(text: str):
-    """Naver Clova 활용 임베딩"""
-    headers = {
-        "Authorization": f"Bearer {NCLOVA_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    payload = {"texts": [text]}
-
-    response = requests.post(NCLOVA_API_URL, headers=headers, json=payload)
-    if response.status_code == 200:
-        return response.json()["results"][0]["embedding"]
-    else:
-        raise Exception(f"Embedding 요청 실패: {response.text}")
-    
 # def get_embedding(text: str):
-#     sentences = text.split('. ') # 문장 단위 분리
-#     embeddings = model.encode(sentences, convert_to_tensor=True)
-#     vector = np.mean(embeddings.cpu().numpy(), axis=0)
-#     return vector.tolist()
+#     """Naver Clova 활용 임베딩"""
+#     headers = {
+#         "Authorization": f"Bearer {NCLOVA_API_KEY}",
+#         "Content-Type": "application/json"
+#     }
+#     payload = {"texts": [text]}
+
+#     response = requests.post(NCLOVA_API_URL, headers=headers, json=payload)
+#     if response.status_code == 200:
+#         return response.json()["results"][0]["embedding"]
+#     else:
+#         raise Exception(f"Embedding 요청 실패: {response.text}")
+    
+def get_embedding(text: str):
+    sentences = text.split('. ') # 문장 단위 분리
+    embeddings = model.encode(sentences, convert_to_tensor=True)
+    vector = np.mean(embeddings.cpu().numpy(), axis=0)
+    return vector.tolist()
