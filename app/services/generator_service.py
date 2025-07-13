@@ -15,7 +15,7 @@ HEADERS = {
 }
 
 #CLOVA 활용 아티클 생성
-def generate_level_articles(all_texts: list, topic: str) -> dict:
+def generate_level_articles_clova(all_texts: list, topic: str) -> dict:
     combined_text = "\n\n".join(all_texts)
 
     prompt = f"""
@@ -72,7 +72,7 @@ def generate_level_articles(all_texts: list, topic: str) -> dict:
 client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 
 #ChatGPT 활용 아티클 생성
-def generate_level_articles_openai(all_texts: list, topic: str) -> dict:
+def generate_level_articles(all_texts: list, topic: str) -> dict:
     combined_text = "\n\n".join(all_texts)
 
     prompt = f"""
