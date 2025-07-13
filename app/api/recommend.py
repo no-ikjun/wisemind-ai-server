@@ -19,23 +19,39 @@ def recommend(data: dict = Body(...)):
     max_dist = max(D[0]) if max(D[0]) > 0 else 1
 
     results = []
+    used_titles = set()
+
     for dist, idx in zip(D[0], I[0]):
         if idx >= len(metadata):
             continue
 
+        item = metadata[idx].copy() if isinstance(metadata[idx], dict) else dict(metadata[idx])
+        title = item.get("topic") or item.get("title") or ""
+
+        if title in used_titles:
+            continue
+
         relevance_score = (1 - (float(dist) / float(max_dist))) * 100
         relevance_score = max(0, min(100, relevance_score))
-
-        item = metadata[idx].copy() if isinstance(metadata[idx], dict) else dict(metadata[idx])
         item["relevance"] = round(float(relevance_score), 1)
-        results.append(item)
 
-    # 부족분 랜덤 채우기
+        results.append(item)
+        used_titles.add(title)
+
+    # 부족분 랜덤 채우기 (중복 제거 포함)
     if len(results) < top_k:
         all_articles = get_all_articles()
-        remaining = [a for a in all_articles if a not in results]
         import random
-        random.shuffle(remaining)
-        results.extend(remaining[:top_k - len(results)])
+        random.shuffle(all_articles)
+
+        for article in all_articles:
+            title = article.get("topic") or article.get("title") or ""
+            if title not in used_titles:
+                article = article.copy() if isinstance(article, dict) else dict(article)
+                article["relevance"] = 0  # 랜덤 채운 건 relevance 없음
+                results.append(article)
+                used_titles.add(title)
+                if len(results) >= top_k:
+                    break
 
     return results[:top_k]
