@@ -2,6 +2,8 @@ import os
 import openai
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+load_dotenv()
+
 API_KEY = os.getenv("NCLOVA_API_KEY")
 API_URL = "https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-003"
 
@@ -14,7 +16,7 @@ HEADERS = {
 session_store = {}
 
 # CLOVA 활용 채팅
-def get_chatbot_response(session_id: str, user_message: str) -> str:
+def get_chatbot_response_clova(session_id: str, user_message: str) -> str:
     if session_id not in session_store:
         session_store[session_id] = [
             {"role": "system", "content": "너는 Wisemind의 투자 분석 도우미야. 간결하고 정확하게 답변해."}
@@ -51,7 +53,7 @@ def get_chatbot_response(session_id: str, user_message: str) -> str:
 client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 
 #OpenAI 활용 채팅
-def get_chatbot_response_openai(session_id: str, user_message: str) -> str:
+def get_chatbot_response(session_id: str, user_message: str) -> str:
     if session_id not in session_store:
         session_store[session_id] = [
             {"role": "system", "content": "너는 Wisemind의 투자 분석 도우미야. 간결하고 정확하게 답변해."}
